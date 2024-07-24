@@ -5,7 +5,7 @@ import math
 import sys
 
 ############ project files import ####################
-from tracker import filter
+from s_tracker import filter
 #
 
 STATIC_NONE_TRACK_ZONE_X = 170
@@ -70,7 +70,7 @@ class nanoTracking():
          :param hw:  маcсив np.int32[2], ширина и высота прямоугольника
          :param trackIsOn: bool, True - трекинг включен, False - выключен
          :param initF: bool, True - нейронка инциализирована, False - неинициализирована
-         :param tracker: виртуал  класс cv2.Tracker осуществляющий обработку изображения
+         :param s_tracker: виртуал  класс cv2.Tracker осуществляющий обработку изображения
          :param filter: класс фильтра стабилизатора
          :param frameChecker: счетчик кадров на которых ожидается появлении потерянной области, если STATIC_FRAME_SKIP == frameChecker => trackOff()
          в случае успешного нахождения области на кадре frameChecker = 0

@@ -119,7 +119,10 @@ class FeatureMatcher:
         try:
             return self.resize_homography(
                 cv2.findHomography(
-                    kp2, kp1, cv2.RANSAC, self._cfg['ransac_reproj_threshold']
+                    kp2, kp1, cv2.RANSAC,
+                    self._cfg['ransac_reproj_threshold'],
+                    maxIters=self._cfg['ransac_maxIters'],
+                    confidence=self._cfg['ransac_confidence']
                 )[0]
             )
         except cv2.error as _:

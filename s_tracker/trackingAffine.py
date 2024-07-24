@@ -146,7 +146,7 @@ class trackingAffine():
         :param met: метод, который используется для оценки аффинного преобразования между двумя наборами точек
         :return ret, inliners: матрица афиннго преобразования, вектор точек на основе которых производился рассчет
         """
-        frame = cv.blur(frame, (2, 2))
+        # frame = cv.blur(frame, (2, 2))
         if self.trackIsOn == True:
             if np.shape(self.prevFrame) == ():
                 self.prevFrame = frame

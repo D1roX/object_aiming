@@ -15,6 +15,8 @@ DEFAULT_CONFIG = {
     'feature_matcher': {
         'detector': 'superpoint',
         'ransac_reproj_threshold': 10.0,
+        'ransac_maxIters': 2000,
+        'ransac_confidence': 0.995,
         'match_conf': 0.5,
         'max_features': 300,
         'flann_index_params': {

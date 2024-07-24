@@ -2,8 +2,8 @@ import math
 
 import cv2 as cv
 import numpy as np
-from tracker import nanoTracking
-from tracker import trackingAffine
+from s_tracker import nanoTracking
+from s_tracker import trackingAffine
 """
 ...
 mt = main_track.mainTrack()
