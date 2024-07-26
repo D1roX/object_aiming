@@ -20,8 +20,10 @@ class Tracker:
         self.state = False
 
     def switch_tracker(self, frame):
-        square = (self.bbox[2] * self.bbox[3]) / (
-                    frame.shape[0] * frame.shape[1]) * 100
+        square = (self.bbox[2] * self.bbox[3] * 100) / (frame.shape[0] * frame.shape[1])
+        print(self.bbox[2] * self.bbox[3])
+        print(frame.shape[0] * frame.shape[1])
+        print('\n\n')
         print(f'Object square: {square:.2f}')
         if self.tracker_type != 'nano':
             return
@@ -38,7 +40,7 @@ class Tracker:
 
     def update(self, frame):
         ok, self.bbox = self.tracker.update(frame)
-        self.switch_tracker(frame)
+        # self.switch_tracker(frame)
         return ok, self.bbox
 
     def get_state(self):
@@ -77,18 +79,22 @@ class AffineTracker:
 
     def delta_check(self, ret):
         x = (self.bbox[0] * ret[0][0] + self.bbox[1] * ret[0][1] +
-             ret[0][2])
+             self.scale * ret[0][2])
         y = (self.bbox[0] * ret[1][0] + self.bbox[1] * ret[1][1] +
-             ret[1][2])
+             self.scale * ret[1][2])
         self.bbox[0] = x
         self.bbox[1] = y
         self.bbox[2] = self.bbox[2] * self.scale
         self.bbox[3] = self.bbox[3] * self.scale
 
+        # print(self.bbox)
+        # self.bbox = transform_bbox(self.bbox, ret)
+        # print(self.bbox)
+
     def update(self, frame):
         new_kp, new_des = self.feature_matcher.detect(frame)
         kp1, kp2 = self.feature_matcher.match(
-            self.cur_kp, self.cur_des, new_kp, new_des, max_matches=30
+            self.cur_kp, self.cur_des, new_kp, new_des, max_matches=90
         )
         if kp1 is None or len(kp1) < 8:
             print('Недостаточно совпадений')
@@ -97,14 +103,15 @@ class AffineTracker:
         ret, inliners, self.scale, self.prev_angle = angle_rotated_searcher(
             kp1, kp2
         )
-        self.delta_check(ret)
+        # self.delta_check(ret)
 
         self.cur_kp = new_kp
         self.cur_des = new_des
-
-        # self.bbox = transform_bbox(
-        #     self.bbox, self.feature_matcher.find_homography(kp1, kp2)
-        # )
+        print(self.bbox)
+        self.bbox = transform_bbox(
+            self.bbox, self.feature_matcher.find_homography(kp1, kp2)
+        )
+        print(self.bbox)
         return True, (
             int(self.bbox[0]),
             int(self.bbox[1]),

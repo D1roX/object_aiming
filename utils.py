@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 import cv2
 
@@ -64,8 +66,6 @@ def combine_images_vertically(img1, img2):
 
 def transform_bbox(bbox, H):
     x, y, w, h = bbox
-    # print(H)
-    print(bbox)
     pts = np.array([
         [x, y],
         [x + w, y],
@@ -79,7 +79,6 @@ def transform_bbox(bbox, H):
     max_x = np.max(pts[:, 0])
     min_y = np.min(pts[:, 1])
     max_y = np.max(pts[:, 1])
-    print([min_x, min_y, max_x - min_x, max_y - min_y])
     return [min_x, min_y, max_x - min_x, max_y - min_y]
 
 
@@ -89,7 +88,7 @@ def angle_rotated_searcher(prev_pts, curr_pts):
     )
     if ret is None:
         return ret, inliners
-    angle = np.arctan((-ret[0][1]) / ret[0][0])
-    scale = ret[0][0] / np.cos(angle)
+    angle = math.atan((-ret[0][1]) / ret[0][0])
+    scale = ret[0][0] / math.cos(angle)
     print('scale: ', scale)
     return ret, inliners, scale, angle
