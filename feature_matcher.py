@@ -58,9 +58,13 @@ class FeatureMatcher:
         kp1, des1, _ = self._detector.detect_and_compute(img)
         return kp1, des1
 
-    def match(self, kp1, des1, kp2, des2):
+    def match(self, kp1, des1, kp2, des2, max_matches=40):
         try:
             matches = self._matcher.knnMatch(des1.T, des2.T, k=2)
+            # matches = sorted(
+            #     matches,
+            #     key=lambda x: x[0].distance
+            # )[:max_matches]
             good_matches = []
             for m, n in matches:
                 if m.distance < n.distance * self._cfg['match_conf']:
@@ -69,7 +73,6 @@ class FeatureMatcher:
                 return None, None
             kp1 = kp1[:2, np.array(good_matches)[:, 1]].T.reshape(-1, 1, 2)
             kp2 = kp2[:2, np.array(good_matches)[:, 0]].T.reshape(-1, 1, 2)
-
             return (
                 kp1[: self._cfg['max_features']],
                 kp2[: self._cfg['max_features']],
@@ -119,7 +122,7 @@ class FeatureMatcher:
         try:
             return self.resize_homography(
                 cv2.findHomography(
-                    kp2, kp1, cv2.RANSAC,
+                    kp1, kp2, cv2.RANSAC,
                     self._cfg['ransac_reproj_threshold'],
                     maxIters=self._cfg['ransac_maxIters'],
                     confidence=self._cfg['ransac_confidence']
