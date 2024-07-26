@@ -2,6 +2,7 @@ import time
 
 import torch
 
+import uutils
 from aliked import ALIKED
 from disk import DISK
 from lightglue import LightGlue
@@ -13,14 +14,21 @@ import cv2
 import numpy as np
 
 
-extractor = SuperPoint(max_num_keypoints=128).eval()
-matcher = LightGlue(features='superpoint').eval()
+torch.set_grad_enabled(False)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+extractor = SuperPoint(max_num_keypoints=1024).eval().to(device)
+matcher = LightGlue(features='superpoint').eval().to(device)
 bbox_pts = None
 
 video = cv2.VideoCapture('test_movies//popadanie.mpg')
 if not video.isOpened():
     print("Не удалось открыть видеопоток")
     exit()
+
+
+def load_image(image, resize: int = None, **kwargs) -> torch.Tensor:       # 用于仿生眼
+    return uutils.numpy_image_to_torch(image)
 
 
 def new_point_wc(event, x, y, flags, param):
@@ -40,15 +48,18 @@ cv2.namedWindow("Tracking", cv2.WINDOW_AUTOSIZE)
 cv2.setMouseCallback("Tracking", new_point_wc)
 
 ret, prev_frame = video.read()
+prev_frame = load_image(prev_frame)
+prev_feats = extractor.extract(prev_frame.to(device))
 
 while True:
     ret, frame = video.read()
     if not ret:
         break
 
-    frame = frame[:, :]
+    frame = frame[:, 600:]
+    tframe = load_image(frame)
 
-    feats = extractor.extract(t_frame)
+    feats = extractor.extract(tframe.to(device))
     t = time.time()
     matches01 = matcher({"image0": prev_feats, "image1": feats})
     print('matcher time: ', time.time() - t)
@@ -62,6 +73,9 @@ while True:
     m_kpts0 = m_kpts0.cpu().numpy().astype(np.float32)
     m_kpts1 = m_kpts1.cpu().numpy().astype(np.float32)
     M, mask = cv2.findHomography(m_kpts0, m_kpts1, cv2.RANSAC, 5.0)
+    # trans = cv2.warpPerspective(frame, M, (frame.shape[1], frame.shape[0]), flags=cv2.INTER_NEAREST)
+    # cv2.imshow('trans', trans)
+    # cv2.waitKey(0)
     if bbox_pts is not None:
         transformed_bbox = cv2.perspectiveTransform(bbox_pts, M)
 
@@ -75,9 +89,7 @@ while True:
     # Отображение результата
     cv2.imshow("Tracking", frame)
 
-    # Обновление предыдущего кадра
-    prev_frame = t_frame
-    prev_frame = feats1
+    prev_feats = feats
 
     # Выход по нажатию клавиши 'q'
     if cv2.waitKey(27) & 0xFF == ord('q'):
