@@ -299,7 +299,7 @@ from utils import *
 SCOUT_IMG_PATH = 'test_imgs//merge.jpg'
 SEARCH_IMGS_FOLDER = 'test_imgs//aim1//search'
 DIVE_IMGS_FOLDER = 'test_imgs//aim1//dive'
-VIDEO_PATH = 'test_movies//popadanie.mpg'
+VIDEO_PATH = 'test_movies//2_2x_crop.mp4'
 SKIP_FRAME = 560
 
 
@@ -316,7 +316,7 @@ class ObjectAim:
         self.prev_des = None
         self.search_bbox = None
         self.bbox_confidence = 0
-        self.tracker = Tracker('affine')
+        self.tracker = Tracker('nano')
         self.track_ready = False
         self.bbox = None
         self.cap = cv2.VideoCapture(VIDEO_PATH)
@@ -378,45 +378,40 @@ class ObjectAim:
 
     def start(self):
         total_frame = 0
-        # while True:
-        #     frame = self.get_frame()
-        #     if frame is None:
-        #         break
-        #
-        #     total_frame += 1
-        #     if total_frame < SKIP_FRAME:
-        #         continue
-        #
-        #     ok, kp1, kp2 = self.compare(frame)
-        #
-        #     vis = resize_within_bounds(
-        #         draw_matches(
-        #             cv2.rectangle(self.scout_img, self.object_bbox,
-        #                           (255, 0, 0), 2),
-        #             kp1,
-        #             frame,
-        #             kp2
-        #         )
-        #     )
-        #     cv2.imshow('vis', vis)
-        #     # self.out.write(vis)
-        #     if cv2.waitKey(1) & 0xFF == ord('q'):
-        #         break
-        #
-        #     if not ok:
-        #         self.bbox_confidence = 0
-        #         continue
-        #     else:
-        #         self.bbox = self.get_bbox(frame, kp1, kp2)
-        #         if self.bbox is not None:
-        #             self.track_ready = True
-        #             self.tracker.start_tracking(frame, self.bbox)
-        #             break
+        while True:
+            frame = self.get_frame()
+            if frame is None:
+                break
 
-        frame = self.get_frame()
-        self.bbox = [900, 400, 100, 100]
-        self.track_ready = True
-        self.tracker.start_tracking(frame, self.bbox)
+            total_frame += 1
+            if total_frame < SKIP_FRAME:
+                continue
+
+            ok, kp1, kp2 = self.compare(frame)
+
+            vis = resize_within_bounds(
+                draw_matches(
+                    cv2.rectangle(self.scout_img, self.object_bbox,
+                                  (255, 0, 0), 2),
+                    kp1,
+                    frame,
+                    kp2
+                )
+            )
+            cv2.imshow('vis', vis)
+            # self.out.write(vis)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+            if not ok:
+                self.bbox_confidence = 0
+                continue
+            else:
+                self.bbox = self.get_bbox(frame, kp1, kp2)
+                if self.bbox is not None:
+                    self.track_ready = True
+                    self.tracker.start_tracking(frame, self.bbox)
+                    break
 
         while True:
             frame = self.get_frame()

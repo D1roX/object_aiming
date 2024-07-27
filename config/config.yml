@@ -5,7 +5,7 @@ feature_matcher:
     trees: 5
   flann_search_params:
     checks: 100
-  img_size_scale: 0.5
+  img_size_scale: 0.33
   match_conf: 0.7
   max_features: 300
   ransac_reproj_threshold: 10.0

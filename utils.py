@@ -36,8 +36,8 @@ def draw_matches(img1, kp1, img2, kp2):
     if kp1 is None or kp2 is None:
         return vis
     for kp1, kp2 in zip(kp1, kp2):
-        pt1 = (int(kp1[0][0] * 2), int(kp1[0][1] * 2))
-        pt2 = (int(kp2[0][0] * 2) + img1.shape[1], int(kp2[0][1] * 2))
+        pt1 = (int(kp1[0][0] * 3), int(kp1[0][1] * 3))
+        pt2 = (int(kp2[0][0] * 3) + img1.shape[1], int(kp2[0][1] * 3))
 
         color = tuple(np.random.randint(0, 255, 3).tolist())
         cv2.line(vis, pt1, pt2, color, thickness=1, lineType=cv2.LINE_AA)

@@ -71,22 +71,22 @@ while True:
     kp2, des2 = akaze.detectAndCompute(gray_frame, None)
 
     # Сопоставление дескрипторов
-    # bf = cv2.BFMatcher(cv2.NORM_HAMMING)
+    bf = cv2.BFMatcher(cv2.NORM_HAMMING)
 
-    flann_index_params = {
-        'algorithm': 1,
-        'trees': 5
-    }
-    flann_search_params = {
-        'checks': 100
-    }
+    # flann_index_params = {
+    #     'algorithm': 1,
+    #     'trees': 5
+    # }
+    # flann_search_params = {
+    #     'checks': 100
+    # }
+    #
+    # bf = cv2.FlannBasedMatcher(
+    #         flann_index_params, flann_search_params
+    #     )
 
-    bf = cv2.FlannBasedMatcher(
-            flann_index_params, flann_search_params
-        )
-
-    des1 = np.float32(des1)
-    des2 = np.float32(des2)
+    # des1 = np.float32(des1)
+    # des2 = np.float32(des2)
     matches = bf.knnMatch(des1, des2, k=2)
 
     # Применение Lowe's ratio теста
@@ -101,7 +101,9 @@ while True:
                                                                          2)
         dst_pts = np.float32([kp2[m.trainIdx].pt for m in good]).reshape(-1, 1,
                                                                          2)
-        M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
+        M, _ = cv2.findHomography(
+            kp1, kp2, cv2.RANSAC, 10.0, confidence=0.99, maxIters=2000
+        )
 
         # Трансформация точек рамки
         print(bbox_pts)
