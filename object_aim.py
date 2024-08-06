@@ -1,7 +1,7 @@
 import math
 import time
 
-import torch.cuda
+# import torch.cuda
 
 from config.config_manager import read_config
 from feature_matcher import FeatureMatcher
@@ -9,11 +9,11 @@ from feature_matcher import FeatureMatcher
 from tracker import Tracker
 from utils import *
 
-SCOUT_IMG_PATH = 'test_imgs//merge.jpg'
+SCOUT_IMG_PATH = 'test_imgs//search1.jpg'
 SEARCH_IMGS_FOLDER = 'test_imgs//aim1//search'
 DIVE_IMGS_FOLDER = 'test_imgs//aim1//dive'
-VIDEO_PATH = 'test_movies//FL+5.mp4'
-SKIP_FRAME = 250
+VIDEO_PATH = 'test_movies//2_2x_crop.mp4'
+SKIP_FRAME = 550
 
 
 class ObjectAim:

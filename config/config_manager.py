@@ -31,6 +31,7 @@ DEFAULT_CONFIG = {
             'nms_dist': 8,
             'conf_thresh': 0.002,
             'nn_thresh': 0.9,
+            'cuda': False,
         },
         'img_size_scale': 0.5
     },

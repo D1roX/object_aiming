@@ -16,3 +16,4 @@ feature_matcher:
     nms_dist: 8
     nn_thresh: 0.9
     weights_path: models/superpoint_v1.pth
+    cuda: false

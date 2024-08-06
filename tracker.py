@@ -122,7 +122,7 @@ class AffineTracker:
 class ORBTracker:
     def __init__(self):
         self.matcher = cv2.BFMatcher(cv2.NORM_HAMMING)
-        self.detector = cv2.AKAZE_create()
+        self.detector = cv2.ORB_create()
         self.cur_kp = None
         self.cur_des = None
         self.bbox = None
