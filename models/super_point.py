@@ -276,3 +276,14 @@ class SuperPoint:
             return pts, desc, heatmap
         except Exception as _:
             raise FeatureMatcherException()
+
+
+if __name__ == '__main__':
+    model = SuperPointNet()
+    model.load_state_dict(
+        torch.load('superpoint_v1.pth', map_location=torch.device('cpu')))
+    model.eval()
+
+    traced_model = torch.jit.trace(model, torch.rand(1, 1, 640, 480))
+    traced_model.save('superpoint_v3.pt')
+    # torch.save(model.state_dict(), 'superpoint_v3.pt')
